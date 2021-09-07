@@ -9,9 +9,9 @@ class DQNTrainer(object):
         self,
         env: gym.Env,
         max_episode=30000,
-        step_size=100,
+        step_size=2000,
         epsilon=0.99,
-        temp_save_freq=100,
+        temp_save_freq=10,
         model_path="model",
         version="test",
         min_epsilon=0.1,
@@ -64,10 +64,10 @@ class DQNTrainer(object):
             self.epsilon = max(self.epsilon * self.epsilon_decay, self.min_epsilon)
 
             # 설정한 빈도에 따라서 임시 저장
-            # if (episode % self.temp_save_freq) == 0:
-            #     self.agent.save(
-            #         self.model_path, self.target_model_path, str(self.temp_save_freq)
-            #     )
+            if (episode % self.temp_save_freq) == 0:
+                self.agent.save(
+                    self.model_path, self.target_model_path, str(self.temp_save_freq)
+                )
 
             pbar.update(1)
 

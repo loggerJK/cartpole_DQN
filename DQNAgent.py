@@ -69,7 +69,6 @@ class DQNAgent(object):
             y=current_q,
             batch_size=self.batch_size,
             verbose=False,
-            callbacks=self.callbacks,
         )
 
     # target model의 가중치를 model의 가중치로 update 한다
@@ -77,9 +76,11 @@ class DQNAgent(object):
         self.target_model.set_weights(self.model.get_weights())
 
     def save(self, model_path: str, target_model_path: str, version: str):
-        self.model.save(model_path + "_" + version)
-        self.target_model.save(target_model_path + "_" + version)
+        self.model.save(model_path + "_" + version + ".h5")
+        # self.target_model.save(target_model_path + "_" + version + ".h5")
 
     def load(self, model_path: str, target_model_path: str, version: str):
-        self.model = keras.models.load_model(model_path + "_" + version)
-        self.target_model = keras.models.load_model(target_model_path + "_" + version)
+        self.model = keras.models.load_model(model_path + "_" + version + ".h5")
+        # self.target_model = keras.models.load_model(
+        #     target_model_path + "_" + version + ".h5"
+        # )
