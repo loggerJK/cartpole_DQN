@@ -18,6 +18,13 @@ class DQNAgent(object):
         self.replayMemory = ReplayMemory()
         self.gamma = gamma  # 감마, 클수록 미래의 이익을 고려한다
         self.batch_size = batch_size
+        self.callbacks = [
+            keras.callbacks.TensorBoard(
+                log_dir="my_log_dir",
+                histogram_freq=1,
+                embeddings_freq=1,
+            )
+        ]
 
     def _create_model(self) -> Sequential:
         model = models.Sequential()
@@ -58,7 +65,11 @@ class DQNAgent(object):
 
         # 학습!!
         self.model.fit(
-            x=current_states, y=current_q, batch_size=self.batch_size, verbose=False
+            x=current_states,
+            y=current_q,
+            batch_size=self.batch_size,
+            verbose=False,
+            callbacks=self.callbacks,
         )
 
     # target model의 가중치를 model의 가중치로 update 한다
