@@ -75,12 +75,18 @@ class DQNAgent(object):
     def _update_target_model(self):
         self.target_model.set_weights(self.model.get_weights())
 
-    def save(self, model_path: str, target_model_path: str, version: str):
-        self.model.save(model_path + "_" + version + ".h5")
-        # self.target_model.save(target_model_path + "_" + version + ".h5")
+    def save(
+        self, path: str, model_name: str, version: str, target_model_name: str = None
+    ):
+        target_model_name = f"target_{model_name}"
+        save_name = f"{path}/{model_name}_version.h5"
+        target_save_name = f"{path}/{target_model_name}_version.h5"
+        self.model.save(save_name)
+        self.target_model.save(target_save_name)
 
-    def load(self, model_path: str, target_model_path: str, version: str):
-        self.model = keras.models.load_model(model_path + "_" + version + ".h5")
-        # self.target_model = keras.models.load_model(
-        #     target_model_path + "_" + version + ".h5"
-        # )
+    def load(self, path: str, model_name: str, target_model_name: str, version: str):
+        target_model_name = f"target_{model_name}"
+        save_name = f"{path}/{model_name}_version.h5"
+        target_save_name = f"{path}/{target_model_name}_version.h5"
+        self.model = keras.models.load_model(save_name)
+        self.target_model = keras.models.load_model(target_save_name)

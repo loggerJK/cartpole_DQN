@@ -6,7 +6,7 @@ import numpy as np
 
 env = gym.make("CartPole-v0")
 
-model = keras.models.load_model("test.h5")
+model = keras.models.load_model("model_1.h5")
 
 # DQNAgent를 이용해 CartPole을 실행한다
 

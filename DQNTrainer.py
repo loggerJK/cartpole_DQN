@@ -1,7 +1,9 @@
+from sys import version
 from DQNAgent import DQNAgent
 import numpy as np
 import gym
 from tqdm import tqdm
+import os
 
 
 class DQNTrainer(object):
@@ -12,10 +14,12 @@ class DQNTrainer(object):
         step_size=2000,
         epsilon=0.99,
         temp_save_freq=10,
-        model_path="model",
+        model_path=os.getcwd(),
+        model_name="model",
         version="test",
         min_epsilon=0.1,
         epsilon_decay=0.99,
+        save_on_colab=False,
     ):
         self.agent = DQNAgent()
         self.max_episode = max_episode
@@ -24,14 +28,22 @@ class DQNTrainer(object):
         self.epsilon = epsilon
         # 학습할때 임시로 저장할 빈도
         self.temp_save_freq = temp_save_freq
+        # 모델을 저장할 경로
         self.model_path = model_path
+        # 저장할 모델의 경로
+        self.model_name = model_name
+        # 저장할 최종 모델의 버전
         self.version = version
         self.target_model_path = "target_" + model_path
+        # epsilon greedy
         self.min_epsilon = min_epsilon
         self.epsilon_decay = epsilon_decay
+        # colab에서 저장할지 여부
+        self.save_on_colab = save_on_colab
 
     def train(self):
         pbar = tqdm(initial=0, total=self.max_episode, unit="episodes")
+
         for episode in range(self.max_episode):
             cur_state = self.env.reset()
             for step in range(self.step_size):
@@ -65,11 +77,30 @@ class DQNTrainer(object):
 
             # 설정한 빈도에 따라서 임시 저장
             if (episode % self.temp_save_freq) == 0:
-                self.agent.save(
-                    self.model_path, self.target_model_path, str(self.temp_save_freq)
-                )
+                if self.save_on_colab:
+                    self.colab_save(model_name="model", version=episode)
+                else:
+                    self.agent.save(
+                        path=self.model_path, model_name="model", version=episode
+                    )
 
             pbar.update(1)
 
         # 모든 학습이 끝나면 모델을 저장한다
         self.agent.save(self.model_path, self.target_model_path, self.version)
+
+    def colab_save(self, model_name: str, version: str):
+        from google.colab import drive
+        import os
+
+        mount_path = "/content/drive"
+        drive.mount(mount_path)
+
+        model_path = os.path.join(mount_path, "MyDrive", "model")
+
+        # save model on google drive
+        self.agent.save(
+            path=model_path,
+            model_name=model_name,
+            version=version,
+        )
