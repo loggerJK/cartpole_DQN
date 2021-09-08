@@ -66,6 +66,9 @@ class DQNTrainer(object):
                 # replayMemory를 이용해 학습을 진행한다
                 self.agent.train()
 
+                # 상태 업데이트
+                cur_state = next_state
+
                 if done:
                     break
 
