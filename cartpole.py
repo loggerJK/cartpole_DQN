@@ -16,6 +16,10 @@ for i_episode in range(20):
         env.render()
         predicted = model.predict(observation.reshape(-1, 4))
         action = np.argmax(predicted)
+        if action == 0:
+            action = 1
+        else:
+            action = 0
         print(f"predicted = {predicted}, action = {action}")
         # action = np.random.randint(2)
         observation, reward, done, info = env.step(action)

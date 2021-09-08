@@ -30,7 +30,7 @@ class DQNAgent(object):
         model = models.Sequential()
         model.add(layers.Dense(10, activation=relu, input_shape=(4,)))
         model.add(layers.Dense(10, activation=relu))
-        model.add(layers.Dense(2), activation=sigmoid)
+        model.add(layers.Dense(2))
         model.compile(optimizer="rmsprop", loss="mse")
         return model
 
