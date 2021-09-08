@@ -78,18 +78,26 @@ class DQNTrainer(object):
             # 설정한 빈도에 따라서 임시 저장
             if (episode % self.temp_save_freq) == 0:
                 if self.save_on_colab:
-                    self.colab_save(model_name="model", version=str(episode))
+                    self.colab_save(model_name="model", version=self.version)
                 else:
                     self.agent.save(
-                        path=self.model_path, model_name="model", version=episode
+                        path=self.model_path,
+                        model_name="model",
+                        version=self.version,
+                        num_trained=episode,
                     )
 
             pbar.update(1)
 
         # 모든 학습이 끝나면 모델을 저장한다
-        self.agent.save(self.model_path, self.target_model_path, self.version)
+        self.agent.save(
+            self.model_path,
+            self.target_model_path,
+            self.version,
+            num_trained=self.max_episode,
+        )
 
-    def colab_save(self, model_name: str, version: str):
+    def colab_save(self, model_name: str, version: str, num_trained: int):
         from google.colab import drive
         import os
 
@@ -103,9 +111,10 @@ class DQNTrainer(object):
             path=model_path,
             model_name=model_name,
             version=version,
+            num_trained=num_trained,
         )
 
-    def colab_load(self, model_name: str, version: str):
+    def colab_load(self, model_name: str, version: str, num_trained: int):
         from google.colab import drive
         import os
 
@@ -114,9 +123,10 @@ class DQNTrainer(object):
 
         model_path = os.path.join(mount_path, "MyDrive", "model")
 
-        # save model on google drive
+        # load model on google drive
         self.agent.load(
             path=model_path,
             model_name=model_name,
             version=version,
+            num_trained=num_trained,
         )
