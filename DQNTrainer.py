@@ -13,12 +13,12 @@ class DQNTrainer(object):
         max_episode=30000,
         step_size=2000,
         epsilon=0.99,
+        epsilon_decay=0.9999,
         temp_save_freq=10,
         model_path=os.getcwd(),
         model_name="model",
         version="test",
         min_epsilon=0.1,
-        epsilon_decay=0.99,
         save_on_colab=False,
     ):
         self.agent = DQNAgent()
@@ -78,7 +78,7 @@ class DQNTrainer(object):
             # 설정한 빈도에 따라서 임시 저장
             if (episode % self.temp_save_freq) == 0:
                 if self.save_on_colab:
-                    self.colab_save(model_name="model", version=episode)
+                    self.colab_save(model_name="model", version=str(episode))
                 else:
                     self.agent.save(
                         path=self.model_path, model_name="model", version=episode
@@ -100,6 +100,22 @@ class DQNTrainer(object):
 
         # save model on google drive
         self.agent.save(
+            path=model_path,
+            model_name=model_name,
+            version=version,
+        )
+
+    def colab_load(self, model_name: str, version: str):
+        from google.colab import drive
+        import os
+
+        mount_path = "/content/drive"
+        drive.mount(mount_path)
+
+        model_path = os.path.join(mount_path, "MyDrive", "model")
+
+        # save model on google drive
+        self.agent.load(
             path=model_path,
             model_name=model_name,
             version=version,

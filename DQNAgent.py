@@ -1,7 +1,7 @@
 from tensorflow import keras
 from keras import models
 from keras import layers
-from tensorflow.python.keras.backend import relu
+from tensorflow.python.keras.backend import relu, sigmoid
 from tensorflow.python.keras.models import Sequential
 from ReplayMemory import ReplayMemory
 import numpy as np
@@ -28,9 +28,9 @@ class DQNAgent(object):
 
     def _create_model(self) -> Sequential:
         model = models.Sequential()
-        model.add(layers.Dense(30, activation=relu, input_shape=(4,)))
-        model.add(layers.Dense(30, activation=relu))
-        model.add(layers.Dense(2))
+        model.add(layers.Dense(10, activation=relu, input_shape=(4,)))
+        model.add(layers.Dense(10, activation=relu))
+        model.add(layers.Dense(2), activation=sigmoid)
         model.compile(optimizer="rmsprop", loss="mse")
         return model
 
@@ -76,17 +76,34 @@ class DQNAgent(object):
         self.target_model.set_weights(self.model.get_weights())
 
     def save(
-        self, path: str, model_name: str, version: str, target_model_name: str = None
+        self,
+        path: str,
+        model_name: str,
+        version: str,
+        num_trained: int,
+        target_model_name: str = None,
     ):
+        """
+        모델 저장 이름 예시
+        /path/cartpole_v5_300_trained.h5
+
+        """
+        save_name = f"{path}/{model_name}_{version}_{num_trained}_trained.h5"
         target_model_name = f"target_{model_name}"
-        save_name = f"{path}/{model_name}_version.h5"
-        target_save_name = f"{path}/{target_model_name}_version.h5"
+        target_save_name = f"{path}/{model_name}_{version}_{num_trained}_trained.h5"
         self.model.save(save_name)
         self.target_model.save(target_save_name)
 
-    def load(self, path: str, model_name: str, target_model_name: str, version: str):
+    def load(
+        self,
+        path: str,
+        model_name: str,
+        version: str,
+        num_trained: int,
+        target_model_name: str = None,
+    ):
+        save_name = f"{path}/{model_name}_{version}_{num_trained}_trained.h5"
         target_model_name = f"target_{model_name}"
-        save_name = f"{path}/{model_name}_version.h5"
-        target_save_name = f"{path}/{target_model_name}_version.h5"
+        target_save_name = f"{path}/{model_name}_{version}_{num_trained}_trained.h5"
         self.model = keras.models.load_model(save_name)
         self.target_model = keras.models.load_model(target_save_name)
