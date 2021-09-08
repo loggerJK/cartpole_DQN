@@ -78,7 +78,9 @@ class DQNTrainer(object):
             # 설정한 빈도에 따라서 임시 저장
             if (episode % self.temp_save_freq) == 0:
                 if self.save_on_colab:
-                    self.colab_save(model_name="model", version=self.version)
+                    self.colab_save(
+                        model_name="model", version=self.version, num_trained=episode
+                    )
                 else:
                     self.agent.save(
                         path=self.model_path,
