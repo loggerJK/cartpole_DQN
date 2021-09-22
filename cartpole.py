@@ -7,7 +7,7 @@ import numpy as np
 env = gym.make("CartPole-v0")
 
 # model = keras.models.load_model("model_version.h5")
-model = keras.models.load_model("model_10Dense & Sigmodid_30_trained.h5")
+model = keras.models.load_model("model/model_final_450_trained.h5")
 
 
 # DQNAgent를 이용해 CartPole을 실행한다
@@ -16,18 +16,18 @@ for i_episode in range(20):
     observation = env.reset()
     for t in range(100):
         env.render()
-        # predicted = model.predict(observation.reshape(-1, 4))
-        # action = np.argmax(predicted)
+        predicted = model.predict(observation.reshape(-1, 4))
+        action = np.argmax(predicted)
         # if action == 0:
         #     action = 1
         # else:
         #     action = 0
         # print(f"predicted = {predicted}, action = {action}")
-        action = np.random.randint(2)
+        # action = np.random.randint(2)
         observation, reward, done, info = env.step(action)
-        if reward != 1:
-            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-        print(f"observation = {observation}, reward = {reward}")
+        # if reward != 1:
+        #     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        # print(f"observation = {observation}, reward = {reward}")
         if done:
             print(f"{i_episode+1}th episode is finished after {t+1} timesteps")
             break

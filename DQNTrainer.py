@@ -4,7 +4,7 @@ import numpy as np
 import gym
 from tqdm import tqdm
 import os
-import matplotlib as plt
+import matplotlib.pyplot as plt
 
 
 class DQNTrainer(object):
@@ -99,8 +99,11 @@ class DQNTrainer(object):
 
             pbar.update(1)
 
-        # --------------에피소드 종료---------------- #
+            ####### 한 EPISODE 종료 #########
+
         self.save_epi_reward.append(episode_reward)
+
+        # --------------모든 에피소드 종료---------------- #
 
         # 모든 학습이 끝나면 모델을 저장한다
         self.agent.save(
