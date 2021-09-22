@@ -4,21 +4,22 @@ import numpy as np
 import gym
 from tqdm import tqdm
 import os
+import matplotlib as plt
 
 
 class DQNTrainer(object):
     def __init__(
         self,
         env: gym.Env,
-        max_episode=30000,
+        max_episode=500,
         step_size=2000,
         epsilon=0.99,
-        epsilon_decay=0.9999,
-        temp_save_freq=10,
+        epsilon_decay=0.995,
+        temp_save_freq=100,
         model_path=os.getcwd(),
         model_name="model",
         version="test",
-        min_epsilon=0.1,
+        min_epsilon=0.01,
         save_on_colab=False,
     ):
         self.agent = DQNAgent()
@@ -40,13 +41,16 @@ class DQNTrainer(object):
         self.epsilon_decay = epsilon_decay
         # colab에서 저장할지 여부
         self.save_on_colab = save_on_colab
+        self.save_epi_reward = []
 
     def train(self):
         pbar = tqdm(initial=0, total=self.max_episode, unit="episodes")
 
         for episode in range(self.max_episode):
             cur_state = self.env.reset()
-            for step in range(self.step_size):
+            episode_reward, done = 0, False
+
+            while not done:
                 if (np.random.randn(1)) <= self.epsilon:
                     # 0, 1 중에서 무작위로 수를 하나 뽑는다
                     action = np.random.randint(2)
@@ -68,6 +72,7 @@ class DQNTrainer(object):
 
                 # 상태 업데이트
                 cur_state = next_state
+                episode_reward += reward
 
                 if done:
                     break
@@ -94,6 +99,9 @@ class DQNTrainer(object):
 
             pbar.update(1)
 
+        # --------------에피소드 종료---------------- #
+        self.save_epi_reward.append(episode_reward)
+
         # 모든 학습이 끝나면 모델을 저장한다
         self.agent.save(
             self.model_path,
@@ -101,6 +109,9 @@ class DQNTrainer(object):
             self.version,
             num_trained=self.max_episode,
         )
+
+        # episode에 따른 학습결과 (reward의 총합)을 그래프로 표시한다.
+        plt.plot(self.save_epi_reward)
 
     def colab_save(self, model_name: str, version: str, num_trained: int):
         from google.colab import drive

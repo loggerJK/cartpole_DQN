@@ -40,8 +40,8 @@ class DQNAgent(object):
     # replayMemory를 이용해 Agent를 학습
     def train(self):
 
-        # batch_size보다 experience가 많을 경우에만 train
-        if self.batch_size > len(self.replayMemory):
+        # replayMemory에 저장된 experience의 개수는 2000개 이상이어야 함
+        if 2000 > len(self.replayMemory):
             return
 
         # batch_size만큼 샘플링한다

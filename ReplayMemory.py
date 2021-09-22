@@ -6,7 +6,8 @@ class ReplayMemory(object):
 
     # 생성자
     # ReplayMemory를 저장할 배열을 생성한다
-    def __init__(self, capacity=1000):
+    # Deepmind paper에서는 10^6을 추천하지만 메모리 이슈로 10^5을 적용
+    def __init__(self, capacity=100000):
         self.memory = deque([], maxlen=capacity)
 
     # 데이터를 tuple형태로 받아서 ReplayMemory에 저장한다
