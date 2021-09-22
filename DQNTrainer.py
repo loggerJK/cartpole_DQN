@@ -101,7 +101,7 @@ class DQNTrainer(object):
 
             ####### 한 EPISODE 종료 #########
 
-        self.save_epi_reward.append(episode_reward)
+            self.save_epi_reward.append(episode_reward)
 
         # --------------모든 에피소드 종료---------------- #
 
