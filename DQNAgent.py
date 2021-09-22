@@ -90,7 +90,9 @@ class DQNAgent(object):
         """
         save_name = f"{path}/{model_name}_{version}_{num_trained}_trained.h5"
         target_model_name = f"target_{model_name}"
-        target_save_name = f"{path}/{model_name}_{version}_{num_trained}_trained.h5"
+        target_save_name = (
+            f"{path}/{target_model_name}_{version}_{num_trained}_trained.h5"
+        )
         self.model.save(save_name)
         self.target_model.save(target_save_name)
 
@@ -104,6 +106,8 @@ class DQNAgent(object):
     ):
         save_name = f"{path}/{model_name}_{version}_{num_trained}_trained.h5"
         target_model_name = f"target_{model_name}"
-        target_save_name = f"{path}/{model_name}_{version}_{num_trained}_trained.h5"
+        target_save_name = (
+            f"{path}/{target_model_name}_{version}_{num_trained}_trained.h5"
+        )
         self.model = keras.models.load_model(save_name)
         self.target_model = keras.models.load_model(target_save_name)

@@ -16,10 +16,11 @@ class DQNTrainer(object):
         epsilon=0.99,
         epsilon_decay=0.995,
         temp_save_freq=100,
-        model_path=os.getcwd(),
+        model_path=os.path.join(os.getcwd(), "model"),
         model_name="model",
         version="test",
         min_epsilon=0.01,
+        temp_save=True,
         save_on_colab=False,
     ):
         self.agent = DQNAgent()
@@ -39,6 +40,8 @@ class DQNTrainer(object):
         # epsilon greedy
         self.min_epsilon = min_epsilon
         self.epsilon_decay = epsilon_decay
+        # 임시 저장 여부
+        self.temp_save = temp_save
         # colab에서 저장할지 여부
         self.save_on_colab = save_on_colab
         self.save_epi_reward = []
@@ -84,24 +87,30 @@ class DQNTrainer(object):
             self.epsilon = max(self.epsilon * self.epsilon_decay, self.min_epsilon)
 
             # 설정한 빈도에 따라서 임시 저장
-            if (episode % self.temp_save_freq) == 0:
-                if self.save_on_colab:
-                    self.colab_save(
-                        model_name="model", version=self.version, num_trained=episode
-                    )
-                else:
-                    self.agent.save(
-                        path=self.model_path,
-                        model_name="model",
-                        version=self.version,
-                        num_trained=episode,
-                    )
+            if self.temp_save == True:
+                if (episode % self.temp_save_freq) == 0:
+                    if self.save_on_colab:
+                        self.colab_save(
+                            model_name="model",
+                            version=self.version,
+                            num_trained=episode,
+                        )
+                    else:
+                        self.agent.save(
+                            path=self.model_path,
+                            model_name="model",
+                            version=self.version,
+                            num_trained=episode,
+                        )
 
             pbar.update(1)
 
             ####### 한 EPISODE 종료 #########
 
             self.save_epi_reward.append(episode_reward)
+            print(f"epsiode reward for {episode}th reward is : {episode_reward}")
+            print(self.save_epi_reward)
+            print("------------------------------------------------------------")
 
         # --------------모든 에피소드 종료---------------- #
 
