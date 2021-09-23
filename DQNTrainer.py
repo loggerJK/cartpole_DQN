@@ -44,14 +44,16 @@ class DQNTrainer(object):
         self.temp_save = temp_save
         # colab에서 저장할지 여부
         self.save_on_colab = save_on_colab
+        # episode별로 sum of reward를 저장
         self.save_epi_reward = []
+        self.save_epi_step_num = []
 
     def train(self):
         pbar = tqdm(initial=0, total=self.max_episode, unit="episodes")
 
         for episode in range(self.max_episode):
             cur_state = self.env.reset()
-            episode_reward, done = 0, False
+            step, episode_reward, done = 0, 0, False
 
             while not done:
                 if (np.random.randn(1)) <= self.epsilon:
@@ -76,6 +78,7 @@ class DQNTrainer(object):
                 # 상태 업데이트
                 cur_state = next_state
                 episode_reward += reward
+                step += 1
 
                 if done:
                     break
@@ -105,12 +108,10 @@ class DQNTrainer(object):
 
             pbar.update(1)
 
-            ####### 한 EPISODE 종료 #########
-
             self.save_epi_reward.append(episode_reward)
-            print(f"epsiode reward for {episode}th reward is : {episode_reward}")
-            print(self.save_epi_reward)
-            print("------------------------------------------------------------")
+            self.save_epi_step_num.append(step)
+
+            ####### 한 EPISODE 종료 #########
 
         # --------------모든 에피소드 종료---------------- #
 
