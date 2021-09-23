@@ -94,14 +94,14 @@ class DQNTrainer(object):
                 if (episode % self.temp_save_freq) == 0:
                     if self.save_on_colab:
                         self.colab_save(
-                            model_name="model",
+                            model_name=self.model_name,
                             version=self.version,
                             num_trained=episode,
                         )
                     else:
                         self.agent.save(
                             path=self.model_path,
-                            model_name="model",
+                            model_name=self.model_name,
                             version=self.version,
                             num_trained=episode,
                         )
@@ -116,12 +116,19 @@ class DQNTrainer(object):
         # --------------모든 에피소드 종료---------------- #
 
         # 모든 학습이 끝나면 모델을 저장한다
-        self.agent.save(
-            self.model_path,
-            self.target_model_path,
-            self.version,
-            num_trained=self.max_episode,
-        )
+        if self.save_on_colab:
+            self.colab_save(
+                model_name=self.model_name,
+                version=self.version,
+                num_trained=self.max_episode,
+            )
+        else:
+            self.agent.save(
+                path=self.model_path,
+                model_name=self.model_name,
+                version=self.version,
+                num_trained=self.max_episode,
+            )
 
         # episode에 따른 학습결과 (reward의 총합)을 그래프로 표시한다.
         plt.plot(self.save_epi_reward)
